@@ -18,16 +18,16 @@ var (
 			Name: "host_storage_potential", Help: "Storage potential revenue"})
 	*/
 	hostdTotalStorage = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "hostd_total_storage", Help: "total amount of storage available on the hostd in bytes"})
+		Name: "hostd_total_storage", Help: "Total amount of storage available on the hostd in bytes"})
 	hostdUsedStorage = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "hostd_used_storage", Help: "total amount of storage used on the hostd in bytes"})
+		Name: "hostd_used_storage", Help: "Total amount of storage used on the hostd in bytes"})
 	hostdRemainingStorage = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "hostd_remaining_storage", Help: "amount of storage remaining on the host in bytes"})
+		Name: "hostd_remaining_storage", Help: "Amount of storage remaining on the host in bytes"})
 
 	hostdIngress = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "hostd_ingress", Help: "Ingress potential revenue"})
+		Name: "hostd_ingress", Help: "Total ingress bandwidth usage"})
 	hostdEgress = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "hostd_egress", Help: "Egress potential revenue"})
+		Name: "hostd_egress", Help: "Total egress bandwidth usage"})
 
 	hostdLockedCollateral = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "hostd_locked_collateral", Help: "Locked collateral"})
@@ -38,9 +38,8 @@ var (
 		Name: "hostd_wallet_confirmed_siacoin_balance", Help: "Wallet confirmed SCP balance"})
 
 	hostdContractCount = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "hostd_contract_count", Help: "number of host contracts"})
+		Name: "hostd_contract_count", Help: "Number of host contracts"})
 )
-
 
 func convertCurrency(c types.Currency) float64 {
 	f, _ := new(big.Rat).SetFrac(c.Big(), types.Siacoins(1).Big()).Float64()
