@@ -29,12 +29,12 @@ var (
 		Name: "hostd_egress", Help: "Egress potential revenue"})
 
 	hostdLockedCollateral = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "host_locked_collateral", Help: "Locked collateral"})
+		Name: "hostd_locked_collateral", Help: "Locked collateral"})
 	hostdRiskedCollateral = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "host_risked_collateral", Help: "Risked collateral"})
+		Name: "hostd_risked_collateral", Help: "Risked collateral"})
 
 	walletConfirmedSiacoinBalance = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "wallet_confirmed_siacoin_balance", Help: "Wallet confirmed SCP balance"})
+		Name: "hostd_wallet_confirmed_siacoin_balance", Help: "Wallet confirmed SCP balance"})
 
 	hostdContractCount = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "hostd_contract_count", Help: "number of host contracts"})
