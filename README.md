@@ -19,3 +19,6 @@ $> ./hostd-prometheus-exporter -h
   -refresh int
         Frequency to get Metrics from Hostd (minutes) (default 1)
 ```
+#
+
+<img src="https://sia.tech/assets/built-with-Sia-color.png" alt="imagen" width="30%">
