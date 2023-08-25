@@ -2,10 +2,10 @@ package main
 
 import (
 	"flag"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
 	"strconv"
 	"time"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 // boolToFloat64 converts a bool to a float64
@@ -18,7 +18,7 @@ func boolToFloat64(b bool) float64 {
 
 // startMonitor refreshes the Sia metrics periodically as defined by refreshRate
 func startMonitor(refreshRate time.Duration, passwd string, address string) {
-	for range time.Tick(time.Minute *refreshRate) {
+	for range time.Tick(time.Minute * refreshRate) {
 		updateMetrics(passwd, address)
 	}
 }
@@ -29,10 +29,10 @@ func updateMetrics(passwd string, address string) {
 
 	//call collector's function for curl values
 	callClient(passwd, address)
-	}
+}
 
 func main() {
-// TEST VARIABLES
+	// TEST VARIABLES
 	port := flag.Int("port", 8101, "Port to serve Prometheus Metrics on")
 	refresh := flag.Int("refresh", 1, "Frequency to get Metrics from Hostd (minutes)")
 	passwd := flag.String("passwd", "Sia is Awesome", "Hostd API password")
