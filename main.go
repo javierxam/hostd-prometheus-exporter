@@ -4,6 +4,7 @@ import (
 	"flag"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 )
@@ -39,6 +40,11 @@ func main() {
 	address := flag.String("address", "127.0.0.1:9980", "Hostd API address")
 
 	flag.Parse()
+
+	passwdEnv, isSet := os.LookupEnv("HOSTD_PASSWD")
+	if isSet {
+		*passwd = passwdEnv
+	}
 
 	// Set the metrics initially before starting the monitor and HTTP server
 	// If you don't do this all the metrics start with a "0" until they are set
