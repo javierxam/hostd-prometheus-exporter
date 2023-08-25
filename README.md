@@ -2,9 +2,9 @@
 ## Flexible exporter to send Sia's hostd metrics to Prometheus
 
 
-hostd-prometheus-exporter, a nimble and adaptable metrics exporter that delivers Sia metrics to Prometheus for processing and Grafana for plotting and notifying. Sia_exporter simplifies the monitoring of one or multiple Sia instances using Prometheus, Grafana, and other tools.
+hostd-prometheus-exporter, a nimble and adaptable metrics exporter that delivers Sia metrics to Prometheus for processing and Grafana for plotting and notifying. hostd exporter simplifies the monitoring of one or multiple Sia instances using Prometheus, Grafana, and other tools.
 
-In short: sia_exporter enables anyone to design custom Sia charts, alerts, and dashboards.
+In short: hostd_prometheus_exporter enables anyone to design custom Sia charts, alerts, and dashboards.
 
 
 ```
