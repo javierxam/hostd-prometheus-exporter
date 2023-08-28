@@ -23,6 +23,15 @@ var (
 		Name: "hostd_used_storage", Help: "Total amount of storage used on the hostd in bytes"})
 	hostdRemainingStorage = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "hostd_remaining_storage", Help: "Amount of storage remaining on the host in bytes"})
+	contractStorage = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_contract_storage", Help: "Amount of contract storage on the host in bytes"})
+	tempStorage = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_temp_storage", Help: "Amount of temporary storage on the host in bytes"})
+
+	storageReads = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_storage_reads", Help: "Amount of read operations"})
+	storageWrites = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_storage_writes", Help: "Amount of write operations"})
 
 	hostdIngress = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "hostd_ingress", Help: "Total ingress bandwidth usage"})
@@ -55,6 +64,12 @@ func callClient(passwd string, address string) {
 
 	hostdTotalStorage.Set(float64((metrics.Storage.TotalSectors) * rhp2.SectorSize))
 	hostdUsedStorage.Set(float64((metrics.Storage.PhysicalSectors) * rhp2.SectorSize))
+	contractStorage.Set(float64((metrics.Storage.ContractSectors) * rhp2.SectorSize))
+	tempStorage.Set(float64((metrics.Storage.TempSectors) * rhp2.SectorSize))
+
+	storageReads.Set(float64(metrics.Storage.Reads))
+	storageWrites.Set(float64(metrics.Storage.Writes))
+
 	hostdRemainingStorage.Set(float64((metrics.Storage.TotalSectors - metrics.Storage.PhysicalSectors) * rhp2.SectorSize))
 
 	hostdIngress.Set(float64(metrics.Data.RHP2.Ingress + metrics.Data.RHP3.Ingress))
