@@ -46,8 +46,16 @@ var (
 	walletConfirmedSiacoinBalance = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "hostd_wallet_confirmed_siacoin_balance", Help: "Wallet confirmed SCP balance"})
 
-	hostdContractCount = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "hostd_contract_count", Help: "Number of host contracts"})
+	hostdPendingContractCount = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_pending_contract_count", Help: "Number of pending contracts"})
+	hostdActiveContractCount = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_active_contract_count", Help: "Number of active contracts"})
+	hostdRejectedContractCount = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_rejected_contract_count", Help: "Number of rejected contracts"})
+	hostdFailedContractCount = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_failed_contract_count", Help: "Number of failed contracts"})
+	hostdSuccessfulContractCount = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_successful_contract_count", Help: "Number of successful contracts"})
 )
 
 func convertCurrency(c types.Currency) float64 {
@@ -80,6 +88,9 @@ func callClient(passwd string, address string) {
 
 	walletConfirmedSiacoinBalance.Set(convertCurrency(metrics.Balance))
 
-	hostdContractCount.Set(float64(metrics.Contracts.Active))
-
+	hostdPendingContractCount.Set(float64(metrics.Contracts.Pending))
+	hostdActiveContractCount.Set(float64(metrics.Contracts.Active))
+	hostdRejectedContractCount.Set(float64(metrics.Contracts.Rejected))
+	hostdFailedContractCount.Set(float64(metrics.Contracts.Failed))
+	hostdSuccessfulContractCount.Set(float64(metrics.Contracts.Successful))
 }
