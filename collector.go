@@ -4,21 +4,22 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 
-	//	"fmt"
+	"fmt"
 	"log"
 	"math/big"
 	"time"
+	"strconv"
 
 	rhp2 "go.sia.tech/core/rhp/v2"
 	"go.sia.tech/core/types"
 	"go.sia.tech/hostd/api"
+	"go.sia.tech/hostd/host/contracts"
 )
 
 var (
-	/*	// Revenue Metrics
-		hostStorageRevenue = promauto.NewGauge(prometheus.GaugeOpts{
-			Name: "host_storage_potential", Help: "Storage potential revenue"})
-	*/
+	/* */
+
+
 	hostdTotalStorage = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "hostd_total_storage", Help: "Total amount of storage available on the hostd in bytes"})
 	hostdUsedStorage = promauto.NewGauge(prometheus.GaugeOpts{
@@ -109,9 +110,59 @@ func convertCurrency(c types.Currency) float64 {
 func callClient(passwd string, address string) {
 	client := api.NewClient("http://"+address+"/api", passwd)
 	metrics, err := client.Metrics(time.Now())
+	
 	if err != nil {
 		log.Fatalln(err)
 	}
+	
+	filter := contracts.ContractFilter{
+		Statuses: []contracts.ContractStatus{
+			contracts.ContractStatusActive,
+		},
+
+//GET THE CURRENT HEIGHT AND CALCULATE THE BLOCK FOR START AND END OF ACTUAL MONTH
+//		MinExpirationHeight: 0,  MINHEIGHT MAYBE THE START OF CURRENT MONTH
+//		MaxExpirationHeight: 100,MAXHEIGHT MAYBE THE END OF CURRENT MONTH
+	}
+
+
+	//GET CURRENT HEIGHT
+	state := client.Consensus.ChainIndex.Height()
+	consensusState, _ := client.Consensus()
+	fmt.Println(state)
+
+	fmt.Println(consensusState)
+
+	chainID := consensusState.ChainIndex.Height
+	fmt.Println(chainID.Height)
+
+
+
+
+	//TOTAL POTENTIAL REVENUE FOR ACTIVE CONTRACTS
+	contratos, _, err := client.Contracts(filter)
+	var totalRevenue float64 =0
+
+	for _, contrato := range contratos {
+
+		totalRevenue+=convertCurrency(contrato.Usage.StorageRevenue)
+		totalRevenue+=convertCurrency(contrato.Usage.EgressRevenue)
+		totalRevenue+=convertCurrency(contrato.Usage.IngressRevenue)
+		totalRevenue+=convertCurrency(contrato.Usage.RPCRevenue)
+
+
+	}
+	fmt.Println("REVENUE TOTAL = " +strconv.FormatFloat(totalRevenue, 'f', 6, 64))
+
+	
+
+
+
+
+
+
+
+
 
 	// Storage
 	hostdTotalStorage.Set(float64((metrics.Storage.TotalSectors) * rhp2.SectorSize))
@@ -162,4 +213,7 @@ func callClient(passwd string, address string) {
 	hostdRevenuePotentialEgress.Set(convertCurrency(metrics.Revenue.Potential.Egress))
 	hostdRevenuePotentialRegistryRead.Set(convertCurrency(metrics.Revenue.Potential.RegistryRead))
 	hostdRevenuePotentialRegistryWrite.Set(convertCurrency(metrics.Revenue.Potential.RegistryWrite))
+
+
+
 }
