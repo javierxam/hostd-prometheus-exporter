@@ -17,9 +17,6 @@ import (
 )
 
 var (
-	/* */
-
-
 	hostdTotalStorage = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "hostd_total_storage", Help: "Total amount of storage available on the hostd in bytes"})
 	hostdUsedStorage = promauto.NewGauge(prometheus.GaugeOpts{
@@ -100,6 +97,8 @@ var (
 		Name: "hostd_revenue_potential_registry_read", Help: "Potential revenue for registry reads"})
 	hostdRevenuePotentialRegistryWrite = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "hostd_revenue_potential_registry_write", Help: "Potential revenue for registry writes"})
+	hostdRevenuePotentialTotal = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_total", Help: "Potential revenue in total"})
 )
 
 func convertCurrency(c types.Currency) float64 {
@@ -115,6 +114,29 @@ func callClient(passwd string, address string) {
 		log.Fatalln(err)
 	}
 	
+
+	//GET CURRENT HEIGHT
+	consensusState, _ := client.Consensus()
+	blockHeight := float64(consensusState.ChainIndex.Height)
+//	fmt.Println(blockHeight)
+
+
+	//GET REMAINING BLOCKS FOR THE CURRENT MONTH
+    t := time.Now()
+    year, month, _ := t.Date()
+    nextMonth := time.Date(year, month+1, 1, 0, 0, 0, 0, time.UTC)
+    duration := nextMonth.Sub(t)
+//  fmt.Printf("Duración del mes actual: %v\n", duration)
+    roundedDuration := duration.Round(10 * time.Minute)
+    remainingBlocksInMonth:=(roundedDuration.Minutes())/10
+
+	//THERE ARE 4320 BLOCKS PER MONTH
+	//FIND THE FINAL BLOCK OF THE CURRENT MONTH
+	finalBlockOfMonth := blockHeight+remainingBlocksInMonth
+
+//	fmt.Println("Al mes actual le quedan: ", remainingBlocksInMonth)
+	fmt.Println("El bloque final del mes sera aproximadamente : ", finalBlockOfMonth)
+
 	filter := contracts.ContractFilter{
 		Statuses: []contracts.ContractStatus{
 			contracts.ContractStatusActive,
@@ -125,43 +147,20 @@ func callClient(passwd string, address string) {
 //		MaxExpirationHeight: 100,MAXHEIGHT MAYBE THE END OF CURRENT MONTH
 	}
 
-
-	//GET CURRENT HEIGHT
-	state := client.Consensus.ChainIndex.Height()
-	consensusState, _ := client.Consensus()
-	fmt.Println(state)
-
-	fmt.Println(consensusState)
-
-	chainID := consensusState.ChainIndex.Height
-	fmt.Println(chainID.Height)
-
-
-
-
 	//TOTAL POTENTIAL REVENUE FOR ACTIVE CONTRACTS
-	contratos, _, err := client.Contracts(filter)
+	contracts, _, err := client.Contracts(filter)
+	
 	var totalRevenue float64 =0
 
-	for _, contrato := range contratos {
+	for _, contract := range contracts {
 
 		totalRevenue+=convertCurrency(contrato.Usage.StorageRevenue)
 		totalRevenue+=convertCurrency(contrato.Usage.EgressRevenue)
 		totalRevenue+=convertCurrency(contrato.Usage.IngressRevenue)
 		totalRevenue+=convertCurrency(contrato.Usage.RPCRevenue)
 
-
 	}
 	fmt.Println("REVENUE TOTAL = " +strconv.FormatFloat(totalRevenue, 'f', 6, 64))
-
-	
-
-
-
-
-
-
-
 
 
 	// Storage
@@ -214,6 +213,6 @@ func callClient(passwd string, address string) {
 	hostdRevenuePotentialRegistryRead.Set(convertCurrency(metrics.Revenue.Potential.RegistryRead))
 	hostdRevenuePotentialRegistryWrite.Set(convertCurrency(metrics.Revenue.Potential.RegistryWrite))
 
-
-
+	//REVENUE POTENTIAL TOTAL
+	hostdRevenuePotentialTotal.Set(totalRevenue)
 }
