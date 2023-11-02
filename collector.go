@@ -14,6 +14,7 @@ import (
 	"go.sia.tech/core/types"
 	"go.sia.tech/hostd/api"
 	"go.sia.tech/hostd/host/contracts"
+
 )
 
 var (
@@ -97,70 +98,31 @@ var (
 		Name: "hostd_revenue_potential_registry_read", Help: "Potential revenue for registry reads"})
 	hostdRevenuePotentialRegistryWrite = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "hostd_revenue_potential_registry_write", Help: "Potential revenue for registry writes"})
-	hostdRevenuePotentialTotal = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "hostd_revenue_potential_total", Help: "Potential revenue in total"})
-)
+
+	
+	hostdRevenuePotentialActualMonth = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_actual_month", Help: "Potential revenue remaining for current month"})
+	hostdRevenuePotentialNextMonth = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_next_month", Help: "Potential revenue for next month"})
+	hostdRevenuePotentialNext2Month = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_next_2_month", Help: "Potential revenue for next 2 month"})
+
+	)
 
 func convertCurrency(c types.Currency) float64 {
 	f, _ := new(big.Rat).SetFrac(c.Big(), types.Siacoins(1).Big()).Float64()
 	return f
 }
 
+
 func callClient(passwd string, address string) {
 	client := api.NewClient("http://"+address+"/api", passwd)
 	metrics, err := client.Metrics(time.Now())
 	
+
 	if err != nil {
 		log.Fatalln(err)
 	}
-	
-
-	//GET CURRENT HEIGHT
-	consensusState, _ := client.Consensus()
-	blockHeight := float64(consensusState.ChainIndex.Height)
-//	fmt.Println(blockHeight)
-
-
-	//GET REMAINING BLOCKS FOR THE CURRENT MONTH
-    t := time.Now()
-    year, month, _ := t.Date()
-    nextMonth := time.Date(year, month+1, 1, 0, 0, 0, 0, time.UTC)
-    duration := nextMonth.Sub(t)
-//  fmt.Printf("Duración del mes actual: %v\n", duration)
-    roundedDuration := duration.Round(10 * time.Minute)
-    remainingBlocksInMonth:=(roundedDuration.Minutes())/10
-
-	//THERE ARE 4320 BLOCKS PER MONTH
-	//FIND THE FINAL BLOCK OF THE CURRENT MONTH
-	finalBlockOfMonth := blockHeight+remainingBlocksInMonth
-
-//	fmt.Println("Al mes actual le quedan: ", remainingBlocksInMonth)
-	fmt.Println("El bloque final del mes sera aproximadamente : ", finalBlockOfMonth)
-
-	filter := contracts.ContractFilter{
-		Statuses: []contracts.ContractStatus{
-			contracts.ContractStatusActive,
-		},
-
-//GET THE CURRENT HEIGHT AND CALCULATE THE BLOCK FOR START AND END OF ACTUAL MONTH
-//		MinExpirationHeight: 0,  MINHEIGHT MAYBE THE START OF CURRENT MONTH
-//		MaxExpirationHeight: 100,MAXHEIGHT MAYBE THE END OF CURRENT MONTH
-	}
-
-	//TOTAL POTENTIAL REVENUE FOR ACTIVE CONTRACTS
-	contracts, _, err := client.Contracts(filter)
-	
-	var totalRevenue float64 =0
-
-	for _, contract := range contracts {
-
-		totalRevenue+=convertCurrency(contrato.Usage.StorageRevenue)
-		totalRevenue+=convertCurrency(contrato.Usage.EgressRevenue)
-		totalRevenue+=convertCurrency(contrato.Usage.IngressRevenue)
-		totalRevenue+=convertCurrency(contrato.Usage.RPCRevenue)
-
-	}
-	fmt.Println("REVENUE TOTAL = " +strconv.FormatFloat(totalRevenue, 'f', 6, 64))
 
 
 	// Storage
@@ -213,6 +175,120 @@ func callClient(passwd string, address string) {
 	hostdRevenuePotentialRegistryRead.Set(convertCurrency(metrics.Revenue.Potential.RegistryRead))
 	hostdRevenuePotentialRegistryWrite.Set(convertCurrency(metrics.Revenue.Potential.RegistryWrite))
 
-	//REVENUE POTENTIAL TOTAL
-	hostdRevenuePotentialTotal.Set(totalRevenue)
+
+
+//REVENUE FOR CURRENT MONTH
+	//GET CURRENT HEIGHT
+	consensusState, _ := client.Consensus()
+	blockHeight := float64(consensusState.ChainIndex.Height)
+
+	//GET REMAINING BLOCKS FOR THE CURRENT MONTH
+    t := time.Now()
+    year, month, _ := t.Date()
+    nextMonth := time.Date(year, month+1, 1, 0, 0, 0, 0, time.UTC)
+    duration := nextMonth.Sub(t)
+	roundedDuration := duration.Round(10 * time.Minute)
+    remainingBlocksInMonth:=(roundedDuration.Minutes())/10
+
+	//THERE ARE 4320 BLOCKS PER MONTH
+	//FIND THE INITIAL & FINAL BLOCK OF THE CURRENT MONTH
+	finalBlockOfMonth := uint64(blockHeight+remainingBlocksInMonth)
+	fmt.Println("Al mes actual le quedan: ", remainingBlocksInMonth)
+	fmt.Println("El bloque final del mes sera aproximadamente : ", finalBlockOfMonth)
+	//FILTER FOR ACTIVE CONTRACTS EXPIRING ON CURRENT MONTH
+	filter := contracts.ContractFilter{
+		Statuses: []contracts.ContractStatus{
+			contracts.ContractStatusActive,
+		},
+	//	MinExpirationHeight: (initialBlockOfNextMonth), //MINHEIGHT IS THE START OF NEXTMONTH
+		MaxExpirationHeight: (finalBlockOfMonth),   //  MAXHEIGHT IS THE END OF CURRENT MONTH
+	}
+
+	//TOTAL POTENTIAL REVENUE FOR ACTIVE CONTRACTS ON CURRENT MONTH
+	contratos, _, err := client.Contracts(filter)
+	var RevenueActualMonth float64 =0
+
+	for _, contrato := range contratos {
+		RevenueActualMonth+=convertCurrency(contrato.Usage.StorageRevenue)
+		RevenueActualMonth+=convertCurrency(contrato.Usage.EgressRevenue)
+		RevenueActualMonth+=convertCurrency(contrato.Usage.IngressRevenue)
+		RevenueActualMonth+=convertCurrency(contrato.Usage.RPCRevenue)
+
+	}
+	
+	hostdRevenuePotentialActualMonth.Set(RevenueActualMonth)
+
+
+//REVENUE FOR NEXT MONTH
+	//INITIAL & FINAL BLOCK OF NEXT MONTH
+
+	initialBlockOfNextMonth := uint64(finalBlockOfMonth+1)
+	finalBlockOfNextMonth := uint64(blockHeight+remainingBlocksInMonth+4320)
+	
+	fmt.Println("initialBlockOfNextMonth : " + strconv.FormatUint(initialBlockOfNextMonth, 10))
+	fmt.Println("finalBlockOfNextMonth : " + strconv.FormatUint(finalBlockOfNextMonth, 10))
+
+	//FILTER FOR ACTIVE CONTRACTS EXPIRING NEXT MONTH
+	filter2 := contracts.ContractFilter{
+		Statuses: []contracts.ContractStatus{
+			contracts.ContractStatusActive,
+		},
+		MaxExpirationHeight: (finalBlockOfNextMonth),   //MAXHEIGHT IS THE END OF NEXT MONTH
+	}
+	
+	//TOTAL POTENTIAL REVENUE FOR EXPIRING CONTRACTS BETWEEN ACTUAL AND NEXT MONTH
+	var RevenueNextMonth float64 =0
+	contratos2, _, err := client.Contracts(filter2)
+
+	for _, contrato2 := range contratos2 {
+		RevenueNextMonth+=convertCurrency(contrato2.Usage.StorageRevenue)
+		RevenueNextMonth+=convertCurrency(contrato2.Usage.EgressRevenue)
+		RevenueNextMonth+=convertCurrency(contrato2.Usage.IngressRevenue)
+		RevenueNextMonth+=convertCurrency(contrato2.Usage.RPCRevenue)
+	}
+	//TOTAL REVENUE FOR ACTUAL AND NEXT MONTH
+	//SUSTRACT NEXT MONTH MINUS ACTUAL MONTH 
+	//GET THE NEXT MONTH
+	hostdRevenuePotentialNextMonth.Set(RevenueNextMonth-RevenueActualMonth)
+
+//REVENUE FOR NEXT 2 MONTH
+	//INITIAL & FINAL BLOCK OF NEXT MONTH
+
+	//initialBlockOfNextMonth := uint64(finalBlockOfMonth+1)
+	finalBlockOfNextNextMonth := uint64(blockHeight+remainingBlocksInMonth+8640)
+	
+	fmt.Println("finalBlockOfNextNextMonth : " + strconv.FormatUint(finalBlockOfNextNextMonth, 10))
+
+	//FILTER FOR ACTIVE CONTRACTS EXPIRING NEXT MONTH
+	filter3 := contracts.ContractFilter{
+		Statuses: []contracts.ContractStatus{
+			contracts.ContractStatusActive,
+		},
+		MaxExpirationHeight: (finalBlockOfNextNextMonth),   //MAXHEIGHT IS THE END OF NEXT MONTH
+	}
+	
+	//TOTAL POTENTIAL REVENUE FOR EXPIRING CONTRACTS BETWEEN ACTUAL AND NEXT 2 MONTHS
+	var RevenueNextNextMonth float64 =0
+	contratos3, _, err := client.Contracts(filter3)
+
+	for _, contrato3 := range contratos3 {
+		RevenueNextNextMonth+=convertCurrency(contrato3.Usage.StorageRevenue)
+		RevenueNextNextMonth+=convertCurrency(contrato3.Usage.EgressRevenue)
+		RevenueNextNextMonth+=convertCurrency(contrato3.Usage.IngressRevenue)
+		RevenueNextNextMonth+=convertCurrency(contrato3.Usage.RPCRevenue)
+	}
+	potentialNext2Month := RevenueNextNextMonth-RevenueNextMonth
+	hostdRevenuePotentialNext2Month.Set(potentialNext2Month)
+
+
+//CONSOLE PRINT OF REVENEU PER MONTHS
+	fmt.Println("PENDING REVENUE FOR CURRENT MONTH = " +strconv.FormatFloat(RevenueActualMonth, 'f', 6, 64))
+	fmt.Println("EXPECTED REVENUE FOR NEXT MONTH   = " +strconv.FormatFloat(RevenueNextMonth-RevenueActualMonth, 'f', 6, 64))
+	fmt.Println("EXPECTED REVENUE FOR NEXT 2 MONTH = " +strconv.FormatFloat(potentialNext2Month, 'f', 6, 64))
+	
+
+	totalRevenueALLMonths:=convertCurrency(metrics.Revenue.Potential.Storage)+convertCurrency(metrics.Revenue.Potential.Ingress)+convertCurrency(metrics.Revenue.Potential.Egress)+convertCurrency(metrics.Revenue.Potential.RPC)
+	fmt.Println("EXPECTED REVENUE TOTAL            = " +strconv.FormatFloat(totalRevenueALLMonths, 'f', 6, 64))
+
 }
+
