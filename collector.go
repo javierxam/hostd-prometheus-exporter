@@ -4,11 +4,11 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 
-	"fmt"
+//	"fmt"
 	"log"
 	"math/big"
 	"time"
-	"strconv"
+//	"strconv"
 
 	rhp2 "go.sia.tech/core/rhp/v2"
 	"go.sia.tech/core/types"
@@ -107,6 +107,68 @@ var (
 	hostdRevenuePotentialNext2Month = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "hostd_revenue_potential_next_2_month", Help: "Potential revenue for next 2 month"})
 
+	hostdRevenueDay1= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_1", Help: "Potential revenue for day 1"})
+	hostdRevenueDay2= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_2", Help: "Potential revenue for day 2"})
+	hostdRevenueDay3= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_3", Help: "Potential revenue for day 3"})
+	hostdRevenueDay4= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_4", Help: "Potential revenue for day 4"})
+	hostdRevenueDay5= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_5", Help: "Potential revenue for day 5"})
+	hostdRevenueDay6= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_6", Help: "Potential revenue for day 6"})
+	hostdRevenueDay7= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_7", Help: "Potential revenue for day 7"})
+	hostdRevenueDay8= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_8", Help: "Potential revenue for day 8"})
+	hostdRevenueDay9= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_9", Help: "Potential revenue for day 9"})
+	hostdRevenueDay10= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_10", Help: "Potential revenue for day 10"})
+	hostdRevenueDay11= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_11", Help: "Potential revenue for day 11"})
+	hostdRevenueDay12= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_12", Help: "Potential revenue for day 12"})
+	hostdRevenueDay13= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_13", Help: "Potential revenue for day 13"})
+	hostdRevenueDay14= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_14", Help: "Potential revenue for day 14"})
+	hostdRevenueDay15= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_15", Help: "Potential revenue for day 15"})
+	hostdRevenueDay16= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_16", Help: "Potential revenue for day 16"})
+	hostdRevenueDay17= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_17", Help: "Potential revenue for day 17"})
+	hostdRevenueDay18= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_18", Help: "Potential revenue for day 18"})
+	hostdRevenueDay19= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_19", Help: "Potential revenue for day 19"})
+	hostdRevenueDay20= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_20", Help: "Potential revenue for day 20"})
+	hostdRevenueDay21= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_21", Help: "Potential revenue for day 21"})
+	hostdRevenueDay22= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_22", Help: "Potential revenue for day 22"})
+	hostdRevenueDay23= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_23", Help: "Potential revenue for day 23"})
+	hostdRevenueDay24= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_24", Help: "Potential revenue for day 24"})
+	hostdRevenueDay25= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_25", Help: "Potential revenue for day 25"})
+	hostdRevenueDay26= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_26", Help: "Potential revenue for day 26"})
+	hostdRevenueDay27= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_27", Help: "Potential revenue for day 27"})
+	hostdRevenueDay28= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_28", Help: "Potential revenue for day 28"})
+	hostdRevenueDay29= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_29", Help: "Potential revenue for day 29"})
+	hostdRevenueDay30= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_30", Help: "Potential revenue for day 30"})
+	hostdRevenueDay31= promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "hostd_revenue_potential_day_31", Help: "Potential revenue for day 31"})
 	)
 
 func convertCurrency(c types.Currency) float64 {
@@ -114,6 +176,97 @@ func convertCurrency(c types.Currency) float64 {
 	return f
 }
 
+func calcEarningsPerDay(client *api.Client, blockHeight float64) {
+	//GET REMAINING BLOCKS FOR THE CURRENT DAY 
+	t := time.Now() 
+	year, month, day := t.Date() 
+	
+	
+	nextDay := time.Date(year, month, day+1, 0, 0, 0, 0, time.UTC) 
+	duration := nextDay.Sub(t) 
+
+	roundedDuration := duration.Round(10 * time.Minute) 
+	remainingBlocksInDay:=(roundedDuration.Minutes())/10 
+	// Use remainingBlocksInDay instead of remainingBlocksInMonth
+	finalBlockOfToday := uint64(blockHeight+remainingBlocksInDay)
+	//144 BLOCKS PER DAY
+	//scan the next 30 days for earnings of every day
+	var revenueArray[31]float64
+	var revenueDia[31]float64
+
+//RECORREMOS DIA A DIA Y OBTENEMOS LOS CONTRATOS QUE FINALIZAN CADA DIA
+	for dia := 31; dia >= 1; dia-- {
+		nextDayFinalBlock := finalBlockOfToday+uint64(dia*144)
+	//	fmt.Println("final Block Of DAY [" + strconv.Itoa(dia) +"] = " + strconv.FormatUint(nextDayFinalBlock, 10))
+
+		filter := contracts.ContractFilter{
+			Statuses: []contracts.ContractStatus{
+				contracts.ContractStatusActive,
+			},
+		//	MinExpirationHeight: (initialBlockOfNextMonth), //MINHEIGHT IS THE START OF NEXTMONTH
+			MaxExpirationHeight: (nextDayFinalBlock),   //  MAXHEIGHT IS THE END OF CURRENT MONTH
+		}
+		contratos, _, _ := client.Contracts(filter)
+		
+		var RevenuePerDay float64 = 0 
+		
+	//	RECORREMOS TODOS LOS CONTRATOS DE CADDA DIA Y SUMAMOS LAS GANANCIAS
+		for _, contrato := range contratos {
+			RevenuePerDay+=convertCurrency(contrato.Usage.StorageRevenue)
+			RevenuePerDay+=convertCurrency(contrato.Usage.EgressRevenue)
+			RevenuePerDay+=convertCurrency(contrato.Usage.IngressRevenue)
+			RevenuePerDay+=convertCurrency(contrato.Usage.RPCRevenue)
+		}
+		
+		revenueArray[dia-1] = RevenuePerDay
+
+	}
+//	fmt.Println(revenueArray)
+	//OBTENEMOS LAS GANANCIAS LIMPIAS DE CADA DIA
+	for dia := 31; dia >= 1; dia-- {
+		if dia > 1{
+    		revenueDia[dia-1]=revenueArray[dia-1]-revenueArray[dia-2]
+		}else{
+			revenueDia[dia-1]=revenueArray[dia-1]
+		}
+	}
+	hostdRevenueDay1.Set(revenueDia[0])
+	hostdRevenueDay2.Set(revenueDia[1])
+	hostdRevenueDay3.Set(revenueDia[2])
+	hostdRevenueDay4.Set(revenueDia[3])
+	hostdRevenueDay5.Set(revenueDia[4])
+	hostdRevenueDay6.Set(revenueDia[5])
+	hostdRevenueDay7.Set(revenueDia[6])
+	hostdRevenueDay8.Set(revenueDia[7])
+	hostdRevenueDay9.Set(revenueDia[8])
+	hostdRevenueDay10.Set(revenueDia[9])
+	hostdRevenueDay11.Set(revenueDia[10])
+	hostdRevenueDay12.Set(revenueDia[11])
+	hostdRevenueDay13.Set(revenueDia[12])
+	hostdRevenueDay14.Set(revenueDia[13])
+	hostdRevenueDay15.Set(revenueDia[14])
+	hostdRevenueDay16.Set(revenueDia[15])
+	hostdRevenueDay17.Set(revenueDia[16])
+	hostdRevenueDay18.Set(revenueDia[17])
+	hostdRevenueDay19.Set(revenueDia[18])
+	hostdRevenueDay20.Set(revenueDia[19])
+	hostdRevenueDay21.Set(revenueDia[20])
+	hostdRevenueDay22.Set(revenueDia[21])
+	hostdRevenueDay23.Set(revenueDia[22])
+	hostdRevenueDay24.Set(revenueDia[23])
+	hostdRevenueDay25.Set(revenueDia[24])
+	hostdRevenueDay26.Set(revenueDia[25])
+	hostdRevenueDay27.Set(revenueDia[26])
+	hostdRevenueDay28.Set(revenueDia[27])
+	hostdRevenueDay29.Set(revenueDia[28])
+	hostdRevenueDay30.Set(revenueDia[29])
+	hostdRevenueDay31.Set(revenueDia[30])
+	
+//	fmt.Println(revenueDia)
+
+
+
+}
 
 func callClient(passwd string, address string) {
 	client := api.NewClient("http://"+address+"/api", passwd)
@@ -124,7 +277,7 @@ func callClient(passwd string, address string) {
 		log.Fatalln(err)
 	}
 
-
+//METRICS
 	// Storage
 	hostdTotalStorage.Set(float64((metrics.Storage.TotalSectors) * rhp2.SectorSize))
 	hostdUsedStorage.Set(float64((metrics.Storage.PhysicalSectors) * rhp2.SectorSize))
@@ -193,8 +346,6 @@ func callClient(passwd string, address string) {
 	//THERE ARE 4320 BLOCKS PER MONTH
 	//FIND THE INITIAL & FINAL BLOCK OF THE CURRENT MONTH
 	finalBlockOfMonth := uint64(blockHeight+remainingBlocksInMonth)
-	fmt.Println("Al mes actual le quedan: ", remainingBlocksInMonth)
-	fmt.Println("El bloque final del mes sera aproximadamente : ", finalBlockOfMonth)
 	//FILTER FOR ACTIVE CONTRACTS EXPIRING ON CURRENT MONTH
 	filter := contracts.ContractFilter{
 		Statuses: []contracts.ContractStatus{
@@ -208,26 +359,22 @@ func callClient(passwd string, address string) {
 	contratos, _, err := client.Contracts(filter)
 	var RevenueActualMonth float64 =0
 
+	calcEarningsPerDay(client , blockHeight)
+
 	for _, contrato := range contratos {
 		RevenueActualMonth+=convertCurrency(contrato.Usage.StorageRevenue)
 		RevenueActualMonth+=convertCurrency(contrato.Usage.EgressRevenue)
 		RevenueActualMonth+=convertCurrency(contrato.Usage.IngressRevenue)
 		RevenueActualMonth+=convertCurrency(contrato.Usage.RPCRevenue)
-
 	}
 	
-	hostdRevenuePotentialActualMonth.Set(RevenueActualMonth)
 
+	hostdRevenuePotentialActualMonth.Set(RevenueActualMonth)
 
 //REVENUE FOR NEXT MONTH
 	//INITIAL & FINAL BLOCK OF NEXT MONTH
-
-	initialBlockOfNextMonth := uint64(finalBlockOfMonth+1)
+//	initialBlockOfNextMonth := uint64(finalBlockOfMonth+1)
 	finalBlockOfNextMonth := uint64(blockHeight+remainingBlocksInMonth+4320)
-	
-	fmt.Println("initialBlockOfNextMonth : " + strconv.FormatUint(initialBlockOfNextMonth, 10))
-	fmt.Println("finalBlockOfNextMonth : " + strconv.FormatUint(finalBlockOfNextMonth, 10))
-
 	//FILTER FOR ACTIVE CONTRACTS EXPIRING NEXT MONTH
 	filter2 := contracts.ContractFilter{
 		Statuses: []contracts.ContractStatus{
@@ -257,7 +404,6 @@ func callClient(passwd string, address string) {
 	//initialBlockOfNextMonth := uint64(finalBlockOfMonth+1)
 	finalBlockOfNextNextMonth := uint64(blockHeight+remainingBlocksInMonth+8640)
 	
-	fmt.Println("finalBlockOfNextNextMonth : " + strconv.FormatUint(finalBlockOfNextNextMonth, 10))
 
 	//FILTER FOR ACTIVE CONTRACTS EXPIRING NEXT MONTH
 	filter3 := contracts.ContractFilter{
@@ -281,14 +427,7 @@ func callClient(passwd string, address string) {
 	hostdRevenuePotentialNext2Month.Set(potentialNext2Month)
 
 
-//CONSOLE PRINT OF REVENEU PER MONTHS
-	fmt.Println("PENDING REVENUE FOR CURRENT MONTH = " +strconv.FormatFloat(RevenueActualMonth, 'f', 6, 64))
-	fmt.Println("EXPECTED REVENUE FOR NEXT MONTH   = " +strconv.FormatFloat(RevenueNextMonth-RevenueActualMonth, 'f', 6, 64))
-	fmt.Println("EXPECTED REVENUE FOR NEXT 2 MONTH = " +strconv.FormatFloat(potentialNext2Month, 'f', 6, 64))
-	
-
-	totalRevenueALLMonths:=convertCurrency(metrics.Revenue.Potential.Storage)+convertCurrency(metrics.Revenue.Potential.Ingress)+convertCurrency(metrics.Revenue.Potential.Egress)+convertCurrency(metrics.Revenue.Potential.RPC)
-	fmt.Println("EXPECTED REVENUE TOTAL            = " +strconv.FormatFloat(totalRevenueALLMonths, 'f', 6, 64))
+//	totalRevenueALLMonths:=convertCurrency(metrics.Revenue.Potential.Storage)+convertCurrency(metrics.Revenue.Potential.Ingress)+convertCurrency(metrics.Revenue.Potential.Egress)+convertCurrency(metrics.Revenue.Potential.RPC)
 
 }
 
