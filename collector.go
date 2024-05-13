@@ -288,8 +288,8 @@ func callClient(passwd string, address string) {
 	hostdRemainingStorage.Set(float64((metrics.Storage.TotalSectors - metrics.Storage.PhysicalSectors) * rhp2.SectorSize))
 
 	// Data
-	hostdIngress.Set(float64(metrics.Data.RHP2.Ingress + metrics.Data.RHP3.Ingress))
-	hostdEgress.Set(float64(metrics.Data.RHP2.Egress + metrics.Data.RHP3.Egress))
+	hostdIngress.Set(float64(metrics.Data.RHP.Ingress))
+	hostdEgress.Set(float64(metrics.Data.RHP.Egress))
 
 	// Balance
 	walletConfirmedSiacoinBalance.Set(convertCurrency(metrics.Balance))
