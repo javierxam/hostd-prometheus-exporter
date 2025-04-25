@@ -12,8 +12,8 @@ import (
 
 	rhp2 "go.sia.tech/core/rhp/v2"
 	"go.sia.tech/core/types"
-	"go.sia.tech/hostd/api"
-	"go.sia.tech/hostd/host/contracts"
+	"go.sia.tech/hostd/v2/api"
+	"go.sia.tech/hostd/host/v2/contracts"
 
 )
 
